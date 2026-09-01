@@ -1,3 +1,0 @@
-flask>=3.0
-requests>=2.31
-edge-tts>=6.1
