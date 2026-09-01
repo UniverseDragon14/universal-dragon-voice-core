@@ -1,0 +1,14 @@
+[Unit]
+Description=Universal Dragon Voice Core
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=%h/universal-dragon-voice-core/dragon
+EnvironmentFile=-%h/.dragon-voice.env
+ExecStart=%h/universal-dragon-voice-core/dragon/.venv/bin/python3 %h/universal-dragon-voice-core/dragon/dragon_voice.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
