@@ -358,6 +358,7 @@ h1{font-size:15px;letter-spacing:4px;margin:0;color:var(--amber)}
 <button class="lang sel" data-l="en-IN">EN</button>
 <button class="lang" data-l="ta-IN">தமிழ்</button>
 <button class=lang id=vmute>🔊 voice on</button>
+<button class=lang id=wakebtn>💤 wake word</button>
 </div>
 <div id=chat></div>
 <div id=hint>tap the mic and talk — or type below</div>
@@ -368,13 +369,18 @@ h1{font-size:15px;letter-spacing:4px;margin:0;color:var(--amber)}
 </div>
 <script>
 const chat=document.getElementById('chat'),mic=document.getElementById('mic'),
-text=document.getElementById('text'),send=document.getElementById('send');
+text=document.getElementById('text'),send=document.getElementById('send'),
+hint=document.getElementById('hint'),wakebtn=document.getElementById('wakebtn');
 let lang='en-IN',voiceOn=true,listening=false,rec=null;
+let wakeMode=false,awake=false,awakeTimer=null;
+const WAKE_WORDS=['hey dragon','hey nova','ok dragon','hey jarvis'];
 fetch('/healthz').then(r=>r.json()).then(j=>{document.getElementById('brain').textContent='brain: '+j.brain+(j.tts?' · voice: on':' · voice: off')}).catch(()=>{});
 document.querySelectorAll('.lang[data-l]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.lang[data-l]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');lang=b.dataset.l});
 document.getElementById('vmute').onclick=e=>{voiceOn=!voiceOn;e.target.textContent=voiceOn?'🔊 voice on':'🔇 voice off';e.target.classList.toggle('sel',voiceOn)};
 function bubble(t,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
 function play(url){if(!url||!voiceOn)return;const a=new Audio(url);a.play().catch(()=>{})}
+let actx=null;
+function beep(f,d){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f||880;o.type='sine';o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(0.18,actx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+(d||0.18));o.start();o.stop(actx.currentTime+(d||0.18));}catch(e){}}
 async function ask(q){
  if(!q)return; bubble(q,'me'); const w=bubble('…','ai');
  try{
@@ -384,15 +390,44 @@ async function ask(q){
 }
 send.onclick=()=>{const q=text.value.trim();text.value='';ask(q)};
 text.addEventListener('keydown',e=>{if(e.key==='Enter')send.onclick()});
+function heard(t){
+ const low=t.toLowerCase();
+ if(wakeMode&&!awake){
+  let hit=null;
+  for(const w of WAKE_WORDS){if(low.includes(w)){hit=w;break}}
+  if(!hit){hint.textContent="💤 sleeping — say 'Hey Dragon'";return}
+  awake=true;beep(880,0.15);setTimeout(()=>beep(1320,0.15),160);
+  mic.classList.add('on');hint.textContent='🐉 yes boss? listening...';
+  clearTimeout(awakeTimer);
+  awakeTimer=setTimeout(()=>{awake=false;mic.classList.remove('on');hint.textContent="💤 sleeping — say 'Hey Dragon'"},9000);
+  const cmd=low.split(hit)[1].trim();
+  if(cmd){clearTimeout(awakeTimer);awake=false;mic.classList.remove('on');hint.textContent="💤 sleeping — say 'Hey Dragon'";ask(t.slice(low.indexOf(hit)+hit.length).trim())}
+  return;
+ }
+ if(wakeMode&&awake){
+  awake=false;mic.classList.remove('on');clearTimeout(awakeTimer);
+  hint.textContent="💤 sleeping — say 'Hey Dragon'";ask(t);return;
+ }
+ ask(t);
+}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(SR){
- rec=new SR();rec.lang=lang;rec.interimResults=false;rec.maxAlternatives=1;
- rec.onresult=e=>{const t=e.results[0][0].transcript;ask(t)};
- rec.onend=()=>{listening=false;mic.classList.remove('on')};
- rec.onerror=()=>{listening=false;mic.classList.remove('on')};
+ rec=new SR();rec.lang=lang;rec.interimResults=false;rec.maxAlternatives=1;rec.continuous=false;
+ rec.onresult=e=>{heard(e.results[0][0].transcript)};
+ rec.onend=()=>{listening=false;if(!wakeMode)mic.classList.remove('on');if(wakeMode){try{rec.start();listening=true}catch(e){}}};
+ rec.onerror=()=>{listening=false;if(!wakeMode)mic.classList.remove('on')};
 }
+wakebtn.onclick=()=>{
+ if(!rec){alert('Wake word needs Chrome/Edge over HTTPS (use the tunnel URL)');return}
+ wakeMode=!wakeMode;wakebtn.classList.toggle('sel',wakeMode);
+ wakebtn.textContent=wakeMode?'🐉 wake: ON':'💤 wake word';
+ if(wakeMode){awake=false;try{rec.lang=lang;rec.start();listening=true;mic.classList.add('on')}catch(e){}
+  hint.textContent="💤 sleeping — say 'Hey Dragon'";bubble('Wake mode on. Say "Hey Dragon" anytime, boss.','ai')}
+ else{awake=false;clearTimeout(awakeTimer);try{rec.stop()}catch(e){}mic.classList.remove('on');hint.textContent='tap the mic and talk — or type below'}
+};
 mic.onclick=()=>{
  if(!rec){alert('Speech recognition needs Chrome/Edge over HTTPS (use the tunnel URL)');return}
+ if(wakeMode){if(awake){awake=false;mic.classList.remove('on');hint.textContent="💤 sleeping — say 'Hey Dragon'"}return}
  if(listening){rec.stop();return}
  rec.lang=lang;try{rec.start();listening=true;mic.classList.add('on')}catch(e){}
 };

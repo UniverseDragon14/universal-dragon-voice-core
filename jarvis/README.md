@@ -9,6 +9,7 @@ Single-file Flask app. No database. No build step.
 ## What it does
 
 - **Voice in** - browser Web Speech API (English / Tamil toggle)
+- **Wake word** - "Hey Dragon" / "Hey Nova" hands-free mode (browser tab stays open)
 - **Voice out** - edge-tts natural voices (default `en-US-AndrewNeural`)
 - **Brain** - Groq first (fast, free tier), falls back to Moonshot (Kimi), then OpenAI
 - **Tools by voice or text**:
@@ -17,6 +18,17 @@ Single-file Flask app. No database. No build step.
   - `run <command>` - allowlisted safe commands only (ls, df, git status...)
   - `read file <name>` / `write file <name>: <content>` / `list files` - sandboxed to workspace
   - `time` / `date`
+
+## Wake word mode
+
+Tap **💤 wake word** in the top bar. The tab listens continuously. Say
+**"Hey Dragon"** or **"Hey Nova"** - two beeps play, then speak your command.
+You can also say it in one shot: "Hey Dragon, system status".
+
+- Wake listening needs the tab open and (on phones) screen awake.
+- Chrome/Edge + HTTPS required - use the tunnel URL.
+- Wake words are matched in the browser transcript - no audio leaves the Pi
+  except the normal speech-recognition stream to the browser engine.
 
 ## Setup on Pi5
 
