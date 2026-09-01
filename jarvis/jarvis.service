@@ -1,0 +1,14 @@
+[Unit]
+Description=EVE JARVIS Voice Core
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=%h/universal-dragon-voice-core/jarvis
+EnvironmentFile=-%h/.jarvis.env
+ExecStart=%h/universal-dragon-voice-core/jarvis/.venv/bin/python3 %h/universal-dragon-voice-core/jarvis/eve_jarvis.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
