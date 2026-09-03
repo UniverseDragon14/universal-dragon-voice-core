@@ -220,7 +220,7 @@ def tool_list_files():
             items.append(("/ " if p.is_dir() else "  ") + str(rel))
         return "Workspace %s:\n%s" % (WORKSPACE, "\n".join(items) or "(empty)")
     except Exception as e:
-        return "error: %s" % e
+        return "List error: %s" % e
 
 RE_STATUS = re.compile(r"\b(pi5?|system|server|cpu|memory|disk)\s+(status|health|stats)\b|\bhow('s| is) the (pi|server|system)\b", re.I)
 RE_TEMP = re.compile(r"\b(pi\s+)?(temperature|temp|overheat|throttl)", re.I)
