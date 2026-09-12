@@ -1,0 +1,19 @@
+{
+  "id": "nova_young_female_v2",
+  "display_name": "NOVA Young Female v2",
+  "identity": "original_nova_voice",
+  "age_style": "young_adult",
+  "languages": ["ta", "en"],
+  "accent": "Tamil Chennai-neutral",
+  "delivery": {
+    "tone": "soft_fresh_intelligent",
+    "energy": "light_confident",
+    "pace": "natural_slightly_brisk",
+    "pauses": "human_confident",
+    "english_technical_words": "clear",
+    "avoid": ["childish", "elderly", "overly_breathy", "robotic", "celebrity_imitation"]
+  },
+  "moods": ["neutral", "warm", "confident", "calm", "happy", "concerned", "firm", "whisper"],
+  "consent_policy": "Use only original, licensed, or clearly consented reference audio. Do not imitate a real public figure or an unconsenting person.",
+  "notes": "Target listening impression: youthful adult female, natural Tamil/English code-switching, friendly but controlled NOVA system voice."
+}
