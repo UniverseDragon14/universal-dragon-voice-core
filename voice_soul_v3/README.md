@@ -1,94 +1,81 @@
 # NOVA Voice Soul v3
 
-NOVA Voice Soul v3 is the Universal Dragon human-style TTS layer. It is designed for expressive, permission-aware NOVA speech without depending on a single commercial TTS provider.
+Review-first human-style TTS foundation for Universal Dragon / NOVA.
 
-## Goals
+## Goal
 
-- Natural, human-like voice output
-- One consistent NOVA voice identity
-- English + Tamil routing
-- Emotion/prosody control: neutral, warm, confident, calm, happy, concerned, firm, whisper
-- Local-first where practical
-- Raspberry Pi 5 as orchestration/runtime controller
-- No silent sensitive actions: this service only synthesizes speech
-- Streaming-friendly WAV responses
-- No voice cloning without clear permission from the voice owner
+Provide a consistent NOVA voice for English, Tamil and natural Tamil/English code-switching while keeping voice synthesis separate from command execution.
 
-## Engine strategy
+Target identity: `nova_young_female_v2` — youthful-adult, bright, warm, intelligent, Sri Lankan-Tamil-first with light South-Indian influence. This is a **style target**, not a claim of exact regional authenticity. Public recordings may inform general prosody analysis only; speaker-identity training requires original, licensed or clearly consented adult reference audio.
 
-### English — Kokoro
-Kokoro is the lightweight local engine. It is suitable as the fast path for English and can run without a large GPU. Voice Soul v3 controls speed and post-processing around the model.
+## Trust boundary
 
-### Tamil — IndicF5
-IndicF5 is the high-quality Tamil path. It uses a consented reference voice clip plus its transcript to preserve speaker identity and prosody. Keep several NOVA reference clips for different moods so Tamil output can remain expressive.
+Voice Soul v3 is **TTS only**.
 
-IndicF5 can be heavy for a Raspberry Pi 5 CPU. In production, Pi 5 should orchestrate it while the heavy model runs on an approved GPU machine or optimized inference host. The API surface stays the same.
+It does not:
 
-## Voice identity pack
+- run shell commands
+- control GPIO
+- write user files
+- send messages
+- change accounts
+- claim that external actions succeeded
 
-Create a licensed/consented NOVA voice pack:
+Those capabilities, if added later, belong behind a separate permission + verification layer.
 
+## Service
+
+`server.py` exposes:
+
+- `GET /healthz`
+- `POST /v3/speak`
+
+Default bind:
+
+```text
+127.0.0.1:8125
 ```
+
+Optional bearer protection is configured with `NOVA_VOICE_TOKEN`.
+
+## Routing
+
+Current design:
+
+- English -> Kokoro adapter
+- Tamil -> IndicF5 adapter using consented NOVA reference recordings
+- Mood/prosody shaping -> `emotion.py`
+
+Supported moods:
+
+`neutral`, `warm`, `confident`, `calm`, `happy`, `concerned`, `firm`, `whisper`
+
+## Reference voice pack
+
+Expected root:
+
+```text
 voice_soul_v3/voices/nova_female/
-  neutral.wav
-  neutral.txt
-  warm.wav
-  warm.txt
-  confident.wav
-  confident.txt
-  calm.wav
-  calm.txt
-  happy.wav
-  happy.txt
-  concerned.wav
-  concerned.txt
-  firm.wav
-  firm.txt
-  whisper.wav
-  whisper.txt
 ```
 
-Recommended recordings: clean mono WAV, quiet room, no music, no effects, natural delivery. Use the same consenting speaker for every mood.
+The intended pack can contain paired reference audio/text for each approved mood. Do not commit private or unlicensed recordings to a public repository.
 
-## API
+## Hardware reality
 
-### `GET /healthz`
-Returns loaded engines and runtime status.
+Pi 5 is the local controller/orchestrator. Do not assume every high-quality neural TTS model will be responsive enough on Pi 5 itself. Kokoro is intended as the lighter route. IndicF5 may require an approved stronger inference host depending on measured latency and memory use. Treat runtime placement as **unverified until benchmarked on the actual hardware**.
 
-### `POST /v3/speak`
+## Conversation bridge
 
-```json
-{
-  "text": "Aslam, NOVA is ready.",
-  "language": "auto",
-  "mood": "auto",
-  "intensity": 0.72,
-  "engine": "auto"
-}
+The public website should not call this TTS service directly. The intended path is:
+
+```text
+website -> authenticated NOVA Bridge :8130 -> brain -> Voice Soul v3 :8125
 ```
 
-Response: `audio/wav` with headers describing selected engine, mood and language.
+See `../nova_bridge/README.md`.
 
-## Install
+The bridge remains conversation-only and does not expose hardware or action tools.
 
-Create a separate environment so this does not disturb the current Dragon Voice service.
+## Development status
 
-```bash
-cd ~/universal-dragon-voice-core/voice_soul_v3
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-```
-
-Kokoro is optional but recommended for the English local path. IndicF5 is optional and should normally live on a stronger inference machine for near-human Tamil.
-
-## Run
-
-```bash
-export NOVA_VOICE_HOST=127.0.0.1
-export NOVA_VOICE_PORT=8125
-.venv/bin/python3 server.py
-```
-
-## Security boundary
-
-This service is TTS-only. It does not execute shell commands, control GPIO, send messages, or access files. Action permission and execution remain in the NOVA/Dragon control layer. Voice generation is never proof that an external action succeeded.
+This work lives on the draft `nova-voice-soul-v3` branch / PR. Website integration is bridge-ready, but real Pi deployment, Tamil model runtime, regional-accent quality and end-to-end browser audio are not considered verified until tested on the actual deployment path.
