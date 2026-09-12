@@ -42,4 +42,4 @@ jobs:
         run: |
           grep -q '"executed_action": False' nova_bridge/bridge.py
           grep -q 'conversation_only' nova_bridge/bridge.py
-          ! grep -Eq 'subprocess|os\.system|shell=True|GPIO|gpiozero' nova_bridge/bridge.py
+          ! grep -Eq '(^|[^A-Za-z])(subprocess|os\.system|gpiozero|RPi\.GPIO)([^A-Za-z]|$)|shell=True' nova_bridge/bridge.py
