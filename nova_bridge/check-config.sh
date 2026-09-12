@@ -8,8 +8,13 @@ if [[ ! -f "${CFG}" ]]; then
   exit 1
 fi
 
-# Read only variable names/values needed for validation. Never print secret values.
+# Load the existing private Dragon env first when present, then bridge overrides.
+# Values are never printed.
 set -a
+if [[ -f "${HOME}/.dragon-voice.env" ]]; then
+  # shellcheck disable=SC1090
+  source "${HOME}/.dragon-voice.env"
+fi
 # shellcheck disable=SC1090
 source "${CFG}"
 set +a

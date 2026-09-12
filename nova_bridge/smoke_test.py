@@ -13,7 +13,7 @@ TOKEN = os.environ.get("NOVA_BRIDGE_TOKEN", "").strip()
 
 def fetch_json(path: str, *, method: str = "GET", payload: dict | None = None) -> dict:
     body = None
-    headers = {"Accept": "application/json"}
+    headers = {"Accept": "application/json", "Origin": "https://project28268.websitepublisher.ai"}
     if payload is not None:
         body = json.dumps(payload).encode("utf-8")
         headers["Content-Type"] = "application/json"

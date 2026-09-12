@@ -138,3 +138,20 @@ A future permission-gated action service should remain a separate component with
 ## Current verification status
 
 The code is on the draft `nova-voice-soul-v3` branch. The public website is bridge-ready, but Pi deployment, Voice Soul runtime success, Cloudflare Access, and end-to-end browser audio remain **unverified until run on the real Pi/inference host**.
+
+## Voice fallback chain
+
+The bridge prefers Voice Soul v3 when `127.0.0.1:8125` is available. During staged deployment it can safely fall back to:
+
+1. `Voice Soul v3` (`/v3/speak`) — preferred custom NOVA route.
+2. `edge-tts` — `ta-IN-PallaviNeural` for Tamil script and `en-IN-NeerjaExpressiveNeural` for English/Tanglish.
+3. Existing local Voice Soul v2 `nova_warm` — final offline fallback for Latin-script English/Tanglish only.
+
+The fallbacks synthesize speech only. They do not add action execution capability.
+
+### Current Pi 5 staging status
+
+- Bridge local bind: `127.0.0.1:8130`.
+- Existing Voice Soul v2 remains untouched on `127.0.0.1:8124`.
+- Voice Soul v3 reference pack still needs an approved synthetic/licensed or consented reference before IndicF5 is treated as ready.
+- Do not expose the bridge publicly with `NOVA_REQUIRE_CF_ACCESS=0`; that setting is localhost test mode only.

@@ -17,7 +17,8 @@ fi
 command -v python3 >/dev/null || { echo "ERROR: python3 not found"; exit 1; }
 command -v systemctl >/dev/null || { echo "ERROR: systemctl not found"; exit 1; }
 
-mkdir -p "${CFG_DIR}" "${UNIT_DIR}"
+mkdir -p "${CFG_DIR}" "${UNIT_DIR}" "${BRIDGE_DIR}/runtime_audio"
+chmod 700 "${BRIDGE_DIR}/runtime_audio"
 
 if [[ ! -f "${CFG_FILE}" ]]; then
   cp "${BRIDGE_DIR}/nova-bridge.env.example" "${CFG_FILE}"
