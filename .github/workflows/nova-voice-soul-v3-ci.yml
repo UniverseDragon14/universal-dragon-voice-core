@@ -1,0 +1,45 @@
+name: NOVA Voice Soul v3 CI
+
+on:
+  pull_request:
+    paths:
+      - 'voice_soul_v3/**'
+      - 'nova_bridge/**'
+      - '.github/workflows/nova-voice-soul-v3-ci.yml'
+  push:
+    branches:
+      - nova-voice-soul-v3
+    paths:
+      - 'voice_soul_v3/**'
+      - 'nova_bridge/**'
+      - '.github/workflows/nova-voice-soul-v3-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile Python sources
+        run: |
+          python -m py_compile \
+            voice_soul_v3/server.py \
+            voice_soul_v3/emotion.py \
+            voice_soul_v3/engines.py \
+            voice_soul_v3/test_emotion.py \
+            nova_bridge/bridge.py \
+            nova_bridge/smoke_test.py
+      - name: Validate shell scripts
+        run: |
+          bash -n nova_bridge/install-user-service.sh
+          bash -n nova_bridge/check-config.sh
+      - name: Safety boundary check
+        run: |
+          grep -q '"executed_action": False' nova_bridge/bridge.py
+          grep -q 'conversation_only' nova_bridge/bridge.py
+          ! grep -Eq 'subprocess|os\.system|shell=True|GPIO|gpiozero' nova_bridge/bridge.py
