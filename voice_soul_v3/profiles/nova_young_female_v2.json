@@ -4,16 +4,48 @@
   "identity": "original_nova_voice",
   "age_style": "young_adult",
   "languages": ["ta", "en"],
-  "accent": "Tamil Chennai-neutral",
+  "accent": {
+    "primary": "Sri Lankan Tamil neutral",
+    "secondary": "South Indian Tamil influence",
+    "english": "Tamil-influenced clear international English",
+    "claim": "style target only; do not claim exact regional authenticity until tested with a consenting native speaker"
+  },
   "delivery": {
-    "tone": "soft_fresh_intelligent",
-    "energy": "light_confident",
+    "tone": "young_bright_warm_intelligent",
+    "energy": "light_confident_friendly",
     "pace": "natural_slightly_brisk",
-    "pauses": "human_confident",
-    "english_technical_words": "clear",
-    "avoid": ["childish", "elderly", "overly_breathy", "robotic", "celebrity_imitation"]
+    "pauses": "short_human_confident",
+    "pitch_character": "bright_mid_high_without_childlike_exaggeration",
+    "resonance": "light_clear_not_mature_heavy",
+    "tanglish": "natural_code_switching_with_tamil_rhythm",
+    "english_technical_words": "clear_without_forcing_western_accent",
+    "avoid": [
+      "childish",
+      "minor_impression",
+      "elderly",
+      "mature_heavy_resonance",
+      "overly_breathy",
+      "robotic",
+      "celebrity_imitation",
+      "single_real_speaker_clone"
+    ]
+  },
+  "style_mix": {
+    "goal": "Blend the useful prosody traits from multiple user-provided reference recordings into one original NOVA voice rather than reproducing any one speaker.",
+    "weights": {
+      "youthful_brightness": 0.30,
+      "sri_lankan_tamil_cadence": 0.30,
+      "south_indian_tamil_warmth": 0.20,
+      "clear_tanglish_delivery": 0.20
+    },
+    "preserve": [
+      "Tamil vowel length and consonant clarity",
+      "natural phrase-final movement",
+      "short conversational pauses",
+      "friendly confident response rhythm"
+    ]
   },
   "moods": ["neutral", "warm", "confident", "calm", "happy", "concerned", "firm", "whisper"],
-  "consent_policy": "Use only original, licensed, or clearly consented reference audio. Do not imitate a real public figure or an unconsenting person.",
-  "notes": "Target listening impression: youthful adult female, natural Tamil/English code-switching, friendly but controlled NOVA system voice."
+  "consent_policy": "Use only original, licensed, or clearly consented reference audio for speaker identity training. Public recordings may inform general prosody/style analysis but must not be used to clone or reproduce a recognizable speaker.",
+  "notes": "Target listening impression: youthful adult female, Sri Lankan-Tamil-first with light South-Indian influence, natural Tamil/English code-switching, friendly but controlled NOVA system voice."
 }
