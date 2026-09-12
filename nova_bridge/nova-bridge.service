@@ -1,0 +1,21 @@
+[Unit]
+Description=NOVA Secure Conversation Bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/universal-dragon-voice-core/nova_bridge
+EnvironmentFile=-%h/.dragon-voice.env
+EnvironmentFile=%h/.config/universal-dragon/nova-bridge.env
+ExecStart=%h/universal-dragon-voice-core/nova_bridge/.venv/bin/python3 %h/universal-dragon-voice-core/nova_bridge/bridge.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=%h/universal-dragon-voice-core/nova_bridge/runtime_audio
+
+[Install]
+WantedBy=default.target

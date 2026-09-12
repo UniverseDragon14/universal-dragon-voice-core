@@ -1,0 +1,31 @@
+{
+  "id": "nova_lady_v1",
+  "display_name": "NOVA Lady Voice",
+  "identity": "original_nova_voice",
+  "gender_presentation": "female",
+  "languages": ["ta-IN", "en-IN", "en"],
+  "tamil_delivery": "Chennai-neutral conversational Tamil",
+  "english_delivery": "clear Indian English with clean technical pronunciation",
+  "character": {
+    "depth": "warm_low-mid",
+    "energy": "calm_confident",
+    "pace": "measured",
+    "pauses": "confident_natural",
+    "emotion": "expressive_but_controlled",
+    "robotic_effect": false
+  },
+  "default_mood": "warm",
+  "supported_moods": [
+    "neutral",
+    "warm",
+    "confident",
+    "calm",
+    "happy",
+    "concerned",
+    "firm",
+    "whisper"
+  ],
+  "voice_pack_root": "voice_soul_v3/voices/nova_female",
+  "reference_policy": "Use only original, licensed, synthetic, or clearly consented reference recordings. Do not imitate a named actor or public figure.",
+  "notes": "Target one consistent NOVA identity across Tamil and English. Keep Tamil natural and human; avoid exaggerated cinema imitation or robotic processing."
+}

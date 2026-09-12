@@ -1,0 +1,4 @@
+# Merge this rule into the existing tunnel ingress list BEFORE its final catch-all.
+# Do not replace the existing /etc/cloudflared/config.yml wholesale.
+- hostname: bridge.voice.universaldragon.com
+  service: http://127.0.0.1:8130
